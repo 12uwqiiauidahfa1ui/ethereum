@@ -141,7 +141,8 @@ local whitelist = {
     "KEY_neko732",
     "KEY_buyer98388",
     "KEY_givelofetime2883",
-    "KEY_lofevive0983"
+    "KEY_lofevive0983",
+    "KEY_alipaypalmeth215"
     
 }
 
