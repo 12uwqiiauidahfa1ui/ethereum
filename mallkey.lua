@@ -341,4 +341,4 @@ Window:SelectTab(1)
 if savedKey then
     print("Auto-checking saved key:", savedKey)
     verifyKey(savedKey)
-end 
+end
