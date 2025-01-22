@@ -16,6 +16,7 @@ local key = ""
 -- Filepath for SterlingHubKey.json
 local configFilePath = "SterlingHubKey.json"
 
+-- Define the HWID file path for saving the HWID per key
 local hwidFilePath = "SterlingHubHWID.json"
 
 -- Load and Save HWID to JSON File
@@ -39,7 +40,7 @@ local function saveHWIDToFile(key, hwid)
     if success then
         print("HWID saved for key:", key)
     else
-        print("Failed to save HWID:", err)
+        print("Failed to save HWID to file:", err)
     end
 end
 
@@ -136,6 +137,7 @@ local whitelist = {
     "KEY_ego213",
     "KEY_dan521",
     "KEY_yonkiers721",
+    "KEY_rylz902",
     "KEY_tetsuo876",
     "KEY_kuan213",
     "KEY_neko732",
