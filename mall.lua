@@ -1,9 +1,5 @@
 local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn312142/Luna-Interface-Suite/refs/heads/main/source.lua", true))()
 
-local HttpService = game:GetService("HttpService")
-
-local configFile = "SterlingHubConfig.json"
-
 local http = game:GetService("HttpService")
 local userId = game.Players.LocalPlayer.UserId
 
@@ -21,17 +17,16 @@ local Window = Luna:CreateWindow({
     LoadingEnabled = true,
     LoadingTitle = "Sterling Hub",
     LoadingSubtitle = "by DAN",
-
     ConfigSettings = {
-		RootFolder = nil, -- The Root Folder Is Only If You Have A Hub With Multiple Game Scripts and u may remove it. DO NOT ADD A SLASH
-		ConfigFolder = "Sterling Hub" -- The Name Of The Folder Where Luna Will Store Configs For This Script. DO NOT ADD A SLASH
+        RootFolder = nil,
+        ConfigFolder = "Sterling Hub"
     },
 })
 
 Window:CreateHomeTab({
-	SupportedExecutors = {}, -- A Table Of Executors Your Script Supports. Add strings of the executor names for each executor.
-	DiscordInvite = "pvwpXmTmT7", -- The Discord Invite Link. Do Not Include discord.gg/ | Only Include the code.
-	Icon = 1, -- By Default, The Icon Is The Home Icon. If You would like to change it to dashboard, replace the interger with 2
+    SupportedExecutors = {},
+    DiscordInvite = "pvwpXmTmT7",
+    Icon = 1,
 })
 
 local Tab = Window:CreateTab({
@@ -41,29 +36,99 @@ local Tab = Window:CreateTab({
     ShowTitle = true
 })
 
-local SliderValue = 0 -- Variable to store the slider value
-
--- Create the slider
+-- 🛠️ Slider for Points
 local Slider = Tab:CreateSlider({
-    Name = "Money Slider",
-    Description = "Choose the amount of money to receive",
-    Range = {0, 600000000}, -- Maximum value (600k)
-    CurrentValue = 0, -- Default value
-    Increment = 1, -- Increment step (to match the 1,400 reward per fire)
-    Callback = function(Value)
-        SliderValue = Value -- Store the selected value
+    Name = "Points to Give",
+    Range = {0, 250000}, -- Set the range to 0 - 250,000
+    Increment = 1000, -- Increments of 1,000 points
+    CurrentValue = 0, -- Start at 0
+    Callback = function(value)
+        print("Selected points:", value)
     end
-})
+}, "PointsSlider")
 
--- Create the button
-local Button = Tab:CreateButton({
-    Name = "Claim Money",
-    Description = "Click to receive the selected amount of money",
+-- 🛠️ Button to Send Points
+Tab:CreateButton({
+    Name = "Give Points",
+    Description = "Give the selected amount of points to the player.",
     Callback = function()
-        local timesToFire = SliderValue / 1400 -- Calculate how many times to fire the event
-        for i = 1, timesToFire do
-            game:GetService("ReplicatedStorage").packages.Net["RE/DailyReward/Claim"]:FireServer()
-            task.wait(0.1) -- Add a short delay to avoid hitting rate limits
+        local pointsToGive = Slider.CurrentValue -- Get slider value
+
+        if pointsToGive > 0 and pointsToGive <= 250000 then
+            game:GetService("ReplicatedStorage").CarRelated.DataStores.AddPoints:FireServer(pointsToGive)
+
+            -- Success Notification
+            Luna:Notification({
+                Title = "Points Given",
+                Icon = "check_circle",
+                ImageSource = "Material",
+                Content = "Successfully gave " .. pointsToGive .. " points!",
+            })
+        else
+            -- Error Notification
+            Luna:Notification({
+                Title = "Error",
+                Icon = "error",
+                ImageSource = "Material",
+                Content = "Invalid points amount! Please select a value between 1 and 250,000.",
+            })
         end
     end
 })
+
+Tab:CreateSection("Tuning")
+
+-- 🛠️ Slider for Acceleration
+local accelerationSlider = Tab:CreateSlider({
+    Name = "Acceleration",
+    Range = {0, 100}, -- Set the range to 0 - 100
+    Increment = 1, -- Increments by 1
+    CurrentValue = game:GetService("Players").LocalPlayer.LocalFolder.Acceleration.Value, -- Corrected access to .Value
+    Callback = function(value)
+        game:GetService("Players").LocalPlayer.LocalFolder.Acceleration.Value = value -- Corrected access to .Value
+    end
+}, "Acceleration")
+
+-- 🛠️ Slider for Deceleration
+local decelerationSlider = Tab:CreateSlider({
+    Name = "Deceleration",
+    Range = {0, 100}, -- Set the range to 0 - 100
+    Increment = 1, -- Increments by 1
+    CurrentValue = game:GetService("Players").LocalPlayer.LocalFolder.Deceleration.Value, -- Corrected access to .Value
+    Callback = function(value)
+        game:GetService("Players").LocalPlayer.LocalFolder.Deceleration.Value = value -- Corrected access to .Value
+    end
+}, "Deceleration")
+
+-- 🛠️ Slider for Grip
+local gripSlider = Tab:CreateSlider({
+    Name = "Grip",
+    Range = {0, 2}, -- Set the range to 0 - 100
+    Increment = 1, -- Increments by 1
+    CurrentValue = game:GetService("Players").LocalPlayer.LocalFolder.Grip.Value, -- Corrected access to .Value
+    Callback = function(value)
+        game:GetService("Players").LocalPlayer.LocalFolder.Grip.Value = value -- Corrected access to .Value
+    end
+}, "Grip")
+
+-- 🛠️ Slider for Max Speed
+local maxSpeedSlider = Tab:CreateSlider({
+    Name = "Max Speed",
+    Range = {0, 100}, -- Set the range to 0 - 100
+    Increment = 1, -- Increments by 1
+    CurrentValue = game:GetService("Players").LocalPlayer.LocalFolder.MaxSpeed.Value, -- Corrected access to .Value
+    Callback = function(value)
+        game:GetService("Players").LocalPlayer.LocalFolder.MaxSpeed.Value = value -- Corrected access to .Value
+    end
+}, "MaxSpeed")
+
+-- 🛠️ Slider for Responsiveness
+local responsivenessSlider = Tab:CreateSlider({
+    Name = "Responsiveness",
+    Range = {0, 6}, -- Set the range to 0 - 100
+    Increment = 1, -- Increments by 1
+    CurrentValue = game:GetService("Players").LocalPlayer.LocalFolder.Responsiveness.Value, -- Corrected access to .Value
+    Callback = function(value)
+        game:GetService("Players").LocalPlayer.LocalFolder.Responsiveness.Value = value -- Corrected access to .Value
+    end
+}, "Responsiveness")
