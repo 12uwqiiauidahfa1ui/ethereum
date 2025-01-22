@@ -157,7 +157,7 @@ local function verifyKey(key)
             -- If HWID is already associated with this key, check if it matches
             if savedHWIDData and savedHWIDData[key] then
                 if savedHWIDData[key] == HWID then
-                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn312142/thing/refs/heads/main/haikyu"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/haikyu.lua"))()
                     print("Whitelisted key detected. HWID matches. Access granted!")
                     return true
                 else
@@ -167,7 +167,7 @@ local function verifyKey(key)
             else
                 -- First time entering the key, save the HWID
                 saveHWIDToFile(key, HWID)
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn312142/thing/refs/heads/main/haikyu"))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/haikyu.lua"))()
                 print("Whitelisted key detected. HWID locked. Access granted!")
                 return true
             end
@@ -187,7 +187,7 @@ local function verifyKey(key)
         local decoded = game:GetService('HttpService'):JSONDecode(response.Body)
         if decoded.success then
             if decoded.data.valid then
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn312142/thing/refs/heads/main/haikyu"))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/haikyu.lua"))()
                 print("Valid key detected. Access granted!")
                 saveKeyToFile(key)
                 return true
