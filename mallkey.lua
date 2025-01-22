@@ -190,17 +190,17 @@ local function verifyKey(key)
     if response.StatusCode == 200 then
         local decoded = game:GetService('HttpService'):JSONDecode(response.Body)
         if decoded.success then
-            if decoded.data and decoded.data.valid then
+            if decoded.data.valid then
                 loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/mall.lua"))()
                 print("Valid key detected. Access granted!")
                 saveKeyToFile(key)
                 return true
             else
-                print("Key is invalid:", decoded.message or "No message provided")
+                print("Key is invalid.")
                 return false
             end
         else
-            print("API Error:", decoded.message or "No message provided")
+            print("API Error:", decoded.message)
             return false
         end
     else
@@ -208,7 +208,6 @@ local function verifyKey(key)
         return false
     end
 end
-
 
 -- Fluent UI Setup
 local Window = Fluent:CreateWindow({
@@ -342,4 +341,4 @@ Window:SelectTab(1)
 if savedKey then
     print("Auto-checking saved key:", savedKey)
     verifyKey(savedKey)
-end
+end 
