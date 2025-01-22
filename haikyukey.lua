@@ -4,7 +4,7 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 local http = game:GetService("HttpService")
 local userId = game.Players.LocalPlayer.UserId
 
-local blacklist = {1131586622, 1225643250, 1918988070, 1965498239, 877529817}
+local blacklist = {1131586622, 1225643250, 1918988070, 1965498239, 877529817, 7725723707}
 for _, id in pairs(blacklist) do
     if userId == id then
         game.Players.LocalPlayer:Kick("Access revoked from using Sterling Hub.")
