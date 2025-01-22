@@ -360,6 +360,7 @@ local Spin = Window:CreateTab({
 
 local autoSpin = false 
 
+
 local Toggle = Spin:CreateToggle({
 	Name = "Auto Spin",
 	Description = nil,
@@ -375,7 +376,7 @@ local Toggle = Spin:CreateToggle({
 	end
 })
 
-local desiredStyle = "Hinata" 
+local desiredStyles = {}  -- A table to store multiple selected styles
 
 local Dropdown = Spin:CreateDropdown({
 	Name = "Select Desired Style",
@@ -385,8 +386,8 @@ local Dropdown = Spin:CreateDropdown({
 	MultipleOptions = true,
 	SpecialType = nil,
 	Callback = function(Option)
-		desiredStyle = Option -- Update the selected style
-		print("Selected Style:", desiredStyle)
+		desiredStyles = Option  -- Update the selected styles (can be multiple)
+		print("Selected Styles:", table.concat(desiredStyles, ", "))
 	end
 })
 
@@ -394,7 +395,7 @@ local Dropdown = Spin:CreateDropdown({
 function showNotification(styleName)
 	Luna:Notification({
 		Title = "Style Obtained!",
-		Icon = "check_circle", -- You can use other Material icons
+		Icon = "check_circle",  -- You can use other Material icons
 		ImageSource = "Material",
 		Content = "You successfully obtained the style: " .. styleName,
 	})
@@ -404,16 +405,16 @@ end
 function startAutoSpin()
 	coroutine.wrap(function()
 		while autoSpin do
-			local int1 = game:GetService("Players").LocalPlayer.PlayerGui.Interface.Lobby.Styles.TopPanel.DisplayName.Text
-			if int1 == desiredStyle then
-				print("STOP! You got:", int1)
-				autoSpin = false -- Stop spinning automatically
-				showNotification(int1) -- Show notification
+			local currentStyle = game:GetService("Players").LocalPlayer.PlayerGui.Interface.Lobby.Styles.TopPanel.DisplayName.Text
+			if table.find(desiredStyles, currentStyle) then  -- Check if the current style is in the selected styles
+				print("STOP! You got:", currentStyle)
+				autoSpin = false  -- Stop spinning automatically
+				showNotification(currentStyle)  -- Show notification
 				break
 			else
 				game:GetService("ReplicatedStorage").Packages._Index["sleitnick_knit@1.7.0"].knit.Services.StylesService.RF.Roll:InvokeServer(false)
-				print("Spinning... Current result:", int1)
-				wait(0.5) -- Delay between spins
+				print("Spinning... Current result:", currentStyle)
+				wait(0.5)  -- Delay between spins
 			end
 		end
 	end)()
