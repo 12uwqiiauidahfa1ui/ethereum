@@ -4,7 +4,7 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 local http = game:GetService("HttpService")
 local userId = game.Players.LocalPlayer.UserId
 
-local blacklist = {1131586622, 1225643250, 1918988070, 1965498239, 877529817}
+local blacklist = {1131586622, 1225643250, 1918988070, 1965498239, 877529817, 7725723707}
 for _, id in pairs(blacklist) do
     if userId == id then
         game.Players.LocalPlayer:Kick("Access revoked from using Sterling Hub.")
@@ -16,7 +16,8 @@ local key = ""
 -- Filepath for SterlingHubKey.json
 local configFilePath = "SterlingHubKey.json"
 
-local hwidFilePath = "SterlingHub.json"
+-- Define the HWID file path for saving the HWID per key
+local hwidFilePath = "SterlingHubHWID.json"
 
 -- Load and Save HWID to JSON File
 local function loadHWIDFromFile()
@@ -39,7 +40,7 @@ local function saveHWIDToFile(key, hwid)
     if success then
         print("HWID saved for key:", key)
     else
-        print("Failed to save HWID:", err)
+        print("Failed to save HWID to file:", err)
     end
 end
 
@@ -136,13 +137,15 @@ local whitelist = {
     "KEY_ego213",
     "KEY_dan521",
     "KEY_yonkiers721",
+    "KEY_rylz902",
     "KEY_tetsuo876",
     "KEY_kuan213",
     "KEY_neko732",
     "KEY_buyer98388",
     "KEY_givelofetime2883",
     "KEY_lofevive0983",
-    "KEY_alipaypalmeth215"
+    "KEY_alipaypalmeth215",
+    "KEY_quazawalaquaqukalakrrrzabulaza"
     
 }
 
@@ -158,7 +161,7 @@ local function verifyKey(key)
             -- If HWID is already associated with this key, check if it matches
             if savedHWIDData and savedHWIDData[key] then
                 if savedHWIDData[key] == HWID then
-                    loadstring(game:HttpGet("https://github.com/12uwqiiauidahfa1ui/ethereum/blob/main/mall.lua"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/mall.lua"))()
                     print("Whitelisted key detected. HWID matches. Access granted!")
                     return true
                 else
@@ -168,7 +171,7 @@ local function verifyKey(key)
             else
                 -- First time entering the key, save the HWID
                 saveHWIDToFile(key, HWID)
-                loadstring(game:HttpGet("https://github.com/12uwqiiauidahfa1ui/ethereum/blob/main/mall.lua"))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/mall.lua"))()
                 print("Whitelisted key detected. HWID locked. Access granted!")
                 return true
             end
@@ -188,7 +191,7 @@ local function verifyKey(key)
         local decoded = game:GetService('HttpService'):JSONDecode(response.Body)
         if decoded.success then
             if decoded.data.valid then
-                loadstring(game:HttpGet("https://github.com/12uwqiiauidahfa1ui/ethereum/blob/main/mall.lua"))()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/12uwqiiauidahfa1ui/ethereum/refs/heads/main/mall.lua"))()
                 print("Valid key detected. Access granted!")
                 saveKeyToFile(key)
                 return true
