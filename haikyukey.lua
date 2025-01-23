@@ -147,7 +147,8 @@ local whitelist = {
     "KEY_alipaypalmeth215",
     "KEY_quazawalaquaqukalakrrrzabulaza",
     "KEY_coolcoolninjas",
-    "KEY_voldmjbueyr"
+    "KEY_voldmjbueyr",
+    "KEY_lockerlokin"
     
 }
 
