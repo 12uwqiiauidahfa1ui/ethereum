@@ -249,7 +249,7 @@ local Slider = Hitbox:CreateSlider({
     Name = "Spike Hitbox Size",
     Range = {1, 100}, -- Adjust the range as needed
     Increment = 0.1,
-    CurrentValue = game:GetService("ReplicatedStorage").Assets.Hitboxes.Spike.Part.Size.X, 
+    CurrentValue = config.spikeHitbox, 
     Callback = function(value)
         local spikeHitbox = game:GetService("ReplicatedStorage").Assets.Hitboxes.Spike
         local part = spikeHitbox:FindFirstChild("Part") -- Ensure we get the correct Part
@@ -258,6 +258,8 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Spike Part size updated to " .. tostring(part.Size))
+	    config.spikeHitbox = value
+	    saveConfig()
         else
             warn("Part not found in Spike hitbox!")
         end
@@ -268,7 +270,7 @@ local Slider = Hitbox:CreateSlider({
     Name = "Set Hitbox Size",
     Range = {1, 100}, -- Adjust the range as needed
     Increment = 0.1,
-    CurrentValue = game:GetService("ReplicatedStorage").Assets.Hitboxes.Set.Part.Size.X,
+    CurrentValue = config.setHitbox,
     Callback = function(value)
         local setHitbox = game:GetService("ReplicatedStorage").Assets.Hitboxes.Set
         local part = setHitbox:FindFirstChild("Part") -- Ensure we get the correct Part
@@ -277,6 +279,8 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Set Part size updated to " .. tostring(part.Size))
+	    config.setHitbox = value
+	    saveConfig()
         else
             warn("Part not found in Set hitbox!")
         end
@@ -287,7 +291,7 @@ local Slider = Hitbox:CreateSlider({
     Name = "Serve Hitbox Size",
     Range = {1, 100}, -- Adjust the range as needed
     Increment = 0.1,
-    CurrentValue = game:GetService("ReplicatedStorage").Assets.Hitboxes.Serve.Part.Size.X,
+    CurrentValue = config.serveHitbox,
     Callback = function(value)
         local serveHitbox = game:GetService("ReplicatedStorage").Assets.Hitboxes.Serve
         local part = serveHitbox:FindFirstChild("Part") -- Ensure we get the correct Part
@@ -296,6 +300,8 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Serve Part size updated to " .. tostring(part.Size))
+	    config.serveHitbox = value
+	    saveConfig()
         else
             warn("Part not found in Serve hitbox!")
         end
@@ -306,7 +312,7 @@ local Slider = Hitbox:CreateSlider({
     Name = "Dive Hitbox Size",
     Range = {1, 100}, -- Adjust the range as needed
     Increment = 0.1,
-    CurrentValue = game:GetService("ReplicatedStorage").Assets.Hitboxes.Dive.Part.Size.X,
+    CurrentValue = config.diveHitbox,
     Callback = function(value)
         local diveHitbox = game:GetService("ReplicatedStorage").Assets.Hitboxes.Dive
         local part = diveHitbox:FindFirstChild("Part") -- Ensure we get the correct Part
@@ -315,6 +321,8 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Dive Part size updated to " .. tostring(part.Size))
+	    config.diveHitbox = value
+	    saveConfig()
         else
             warn("Part not found in Dive hitbox!")
         end
@@ -325,7 +333,7 @@ local Slider = Hitbox:CreateSlider({
     Name = "Bump Hitbox Size",
     Range = {1, 100}, -- Adjust the range as needed
     Increment = 0.1,
-    CurrentValue = game:GetService("ReplicatedStorage").Assets.Hitboxes.Bump.Part.Size.X,
+    CurrentValue = config.bumpHitbox,
     Callback = function(value)
         local bumpHitbox = game:GetService("ReplicatedStorage").Assets.Hitboxes.Bump
         local part = bumpHitbox:FindFirstChild("Part") -- Ensure we get the correct Part
@@ -334,6 +342,8 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Bump Part size updated to " .. tostring(part.Size))
+	    config.bumpHitbox = value
+	    saveConfig()
         else
             warn("Part not found in Bump hitbox!")
         end
@@ -344,7 +354,7 @@ local Slider = Hitbox:CreateSlider({
     Name = "Block Hitbox Size",
     Range = {1, 100}, -- Adjust the range as needed
     Increment = 0.1,
-    CurrentValue = game:GetService("ReplicatedStorage").Assets.Hitboxes.Block.Part.Size.X,
+    CurrentValue = config.blockHitbox,
     Callback = function(value)
         local blockHitbox = game:GetService("ReplicatedStorage").Assets.Hitboxes.Block
         local part = blockHitbox:FindFirstChild("Part") -- Ensure we get the correct Part
@@ -353,7 +363,9 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Block Part size updated to " .. tostring(part.Size))
-        else
+	    config.blockHitbox = value
+	    saveConfig()
+	else
             warn("Part not found in Block hitbox!")
         end
     end
