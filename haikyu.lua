@@ -24,7 +24,15 @@ local config = {
     jumpPower = 1,
     speed = 1,
     setPower = 1,
-    powerfulServeEnabled = false
+    powerfulServeEnabled = false,
+    spikeHitbox = 10,
+    bumpHitbox = 10,
+    diveHitbox = 10,
+    setHitbox = 10,
+    serveHitbox = 10,
+    blockHitbox = 10
+    
+	
 
     
 }
@@ -139,7 +147,7 @@ local Slider = Tab:CreateSlider({
 
 local Slider = Tab:CreateSlider({
     Name = "Spike Power",
-    Range = {0, 500},
+    Range = {0, 1.2},
     Increment = 0.1,
     CurrentValue = config.spikePower,
     Callback = function(value)
@@ -165,7 +173,7 @@ local Slider = Tab:CreateSlider({
 
 local Slider = Tab:CreateSlider({
     Name = "Set Power",
-    Range = {0, 500},
+    Range = {0, 1.2},
     Increment = 0.1,
     CurrentValue = config.setPower,
     Callback = function(value)
@@ -178,7 +186,7 @@ local Slider = Tab:CreateSlider({
 
 local Slider = Tab:CreateSlider({
     Name = "Serve Power",
-    Range = {0, 500},
+    Range = {0, 1.2},
     Increment = 0.1,
     CurrentValue = config.servePower,
     Callback = function(value)
@@ -204,7 +212,7 @@ local Slider = Tab:CreateSlider({
 
 local Slider = Tab:CreateSlider({
     Name = "Bump Power",
-    Range = {0, 500},
+    Range = {0, 1.2},
     Increment = 0.1,
     CurrentValue = config.bumpPower,
     Callback = function(value)
@@ -217,7 +225,7 @@ local Slider = Tab:CreateSlider({
 
 local Slider = Tab:CreateSlider({
     Name = "Block Power",
-    Range = {0, 500},
+    Range = {0, 1.2},
     Increment = 0.1,
     CurrentValue = config.blockPower,
     Callback = function(value)
