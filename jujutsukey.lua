@@ -149,7 +149,8 @@ local whitelist = {
     "KEY_coolcoolninjas",
     "KEY_voldmjbueyr",
     "KEY_lockerlokin",
-    "KEY_newzealanddola"
+    "KEY_newzealanddola",
+    "KEY_eelcomepub"
     
 }
 
