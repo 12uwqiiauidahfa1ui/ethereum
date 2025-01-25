@@ -160,7 +160,7 @@ local Slider = Tab:CreateSlider({
 
 local Slider = Tab:CreateSlider({
     Name = "Speed",
-    Range = {0, 5},
+    Range = {0, 1.5},
     Increment = 0.1,
     CurrentValue = config.speed,
     Callback = function(value)
