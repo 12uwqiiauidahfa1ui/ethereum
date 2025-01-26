@@ -153,7 +153,8 @@ local whitelist = {
     "KEY_eelcomepub",
     "KEY_failrdgeneratrkeylonk",
     "KEY_boomhkle",
-    "KEY_yfyssthkkbomonplvcttsqt"
+    "KEY_yfyssthkkbomonplvcttsqt",
+    "KEY_WDIWAJDWAIDIMSMAIIOOGHKTG"
     
 }
 
