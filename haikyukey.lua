@@ -154,7 +154,8 @@ local whitelist = {
     "KEY_failrdgeneratrkeylonk",
     "KEY_boomhkle",
     "KEY_yfyssthkkbomonplvcttsqt",
-    "KEY_WDIWAJDWAIDIMSMAIIOOGHKTG"
+    "KEY_WDIWAJDWAIDIMSMAIIOOGHKTG",
+    "KEY_WIAJDIGJHEAUJFNAJMXZMFJ"
     
     
 }
