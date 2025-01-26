@@ -186,7 +186,7 @@ end
 -- Toggle for all functionality
 Tab:CreateToggle({
     Name = "Auto Farm",
-    Description = "Toggle auto farm",
+    Description = "Toggle Auto Farm (Auto Farm sometimes follow the ball and sometimes doesn't)",
     CurrentValue = false,
     Callback = function(Value)
         isRunning = Value
