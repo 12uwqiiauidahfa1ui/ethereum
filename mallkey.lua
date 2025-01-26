@@ -152,7 +152,8 @@ local whitelist = {
     "KEY_newzealanddola",
     "KEY_eelcomepub",
     "KEY_failrdgeneratrkeylonk",
-    "KEY_boomhkle"
+    "KEY_boomhkle",
+    "KEY_yfyssthkkbomonplvcttsqt"
     
 }
 
