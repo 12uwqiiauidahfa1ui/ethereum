@@ -157,6 +157,31 @@ local function teamSelection()
     end
 end
 
+local player = game.Players.LocalPlayer
+local roundOverStats = player.PlayerGui.Interface.RoundOverStats
+local backBtn = roundOverStats.BackBtn
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+
+local function clickBackButton()
+    while roundOverStats.Visible do
+        -- Check if the BackBtn exists, is visible, and is an ImageButton
+        if backBtn and backBtn.Visible and backBtn:IsA("ImageButton") then
+            -- Get the button's position and size
+            local absPos = backBtn.AbsolutePosition
+            local absSize = backBtn.AbsoluteSize
+            local clickPosition = absPos + (absSize / 2) -- Center of the button
+
+            -- Simulate mouse button down
+            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, true, game, 1)
+            -- Simulate mouse button up
+            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, false, game, 1)
+        end
+
+        -- Optional: Add a short delay between clicks to prevent too fast clicking
+        wait(0.1)  -- Adjust the delay as needed
+    end
+end
 
 -- Toggle for all functionality
 Tab:CreateToggle({
@@ -169,7 +194,6 @@ Tab:CreateToggle({
     end
 })
 
--- Main loop
 task.spawn(function()
     while task.wait(0.3) do
         if not isRunning then
@@ -206,6 +230,11 @@ task.spawn(function()
                     pressClick()
                 end
             end
+        end
+
+        -- Trigger the Back button click if the RoundOverStats screen is visible
+        if roundOverStats.Visible then
+            clickBackButton()
         end
     end
 end)
