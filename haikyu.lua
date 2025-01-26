@@ -87,13 +87,137 @@ Window:CreateHomeTab({
 })
 
 local Tab = Window:CreateTab({
-    Name = "Main",
+    Name = "Auto Farm",
+    Icon = "agriculture",
+    ImageSource = "Material",
+    ShowTitle = true
+})
+
+local player = game.Players.LocalPlayer
+local humanoid = player.Character:WaitForChild("Humanoid")
+local humanoidRootPart = player.Character:WaitForChild("HumanoidRootPart")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local isRunning = false -- Tracks the toggle state
+
+-- Functions
+local function pressSpace()
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+    task.wait(0.1)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
+end
+
+local function pressClick()
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+end
+
+local function getRandomTargetPart()
+    local positionsFolder = workspace.Map.BallNoCollide.Positions["2"]
+    local parts = {}
+
+    for _, part in ipairs(positionsFolder:GetChildren()) do
+        if part:IsA("BasePart") then
+            table.insert(parts, part)
+        end
+    end
+
+    if #parts > 0 then
+        return parts[math.random(1, #parts)]
+    end
+    return nil
+end
+
+local function teamSelection()
+    if not isRunning then return end
+
+    local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
+    local gameInterface = player.PlayerGui.Interface.Game
+
+    teamSelectionGui.Visible = true
+
+    local randomNum = math.random(1, 6)
+    local button = teamSelectionGui["2"][tostring(randomNum)]
+
+    if button and button:IsA("ImageButton") then
+        local absPos = button.AbsolutePosition
+        local absSize = button.AbsoluteSize
+        local clickPosition = absPos + (absSize / 2)
+
+        while not gameInterface.Visible and isRunning do
+            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, true, game, 1)
+            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, false, game, 1)
+            task.wait(0.1)
+        end
+    end
+
+    -- Hide the team selection GUI when the game GUI becomes visible
+    if gameInterface.Visible then
+        teamSelectionGui.Visible = false
+    end
+end
+
+
+-- Toggle for all functionality
+Tab:CreateToggle({
+    Name = "Auto Farm",
+    Description = "Toggle auto farm",
+    CurrentValue = false,
+    Callback = function(Value)
+        isRunning = Value
+        print("All functionality is now " .. (Value and "enabled" or "disabled"))
+    end
+})
+
+-- Main loop
+task.spawn(function()
+    while task.wait(0.3) do
+        if not isRunning then
+            continue
+        end
+
+        -- Team selection
+        teamSelection()
+
+        -- Ball tracking logic
+        local ballPart = nil
+        for _, model in ipairs(workspace:GetChildren()) do
+            if model:IsA("Model") and model.Name:match("^CLIENT_BALL_") then
+                ballPart = model:FindFirstChild("Cube.001")
+                if ballPart then
+                    break
+                end
+            end
+        end
+
+        if ballPart then
+            humanoid:MoveTo(ballPart.Position)
+            local distance = (ballPart.Position - humanoidRootPart.Position).magnitude
+
+            if distance <= 20 then
+                local targetPart = getRandomTargetPart()
+                if targetPart then
+                    local lookVector = (targetPart.Position - humanoidRootPart.Position).Unit
+                    humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + lookVector)
+                end
+
+                if ballPart.Position.Y > humanoidRootPart.Position.Y + 5 then
+                    pressSpace()
+                    pressClick()
+                end
+            end
+        end
+    end
+end)
+
+local Tab = Window:CreateTab({
+    Name = "Misc",
     Icon = "autorenew",
     ImageSource = "Material",
     ShowTitle = true
 })
 
-Tab:CreateSection("Main")
+Tab:CreateSection("Misc")
 
 local Button = Tab:CreateButton({
 	Name = "Break The Match",
