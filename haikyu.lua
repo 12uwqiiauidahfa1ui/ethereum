@@ -136,6 +136,9 @@ local function teamSelection()
     local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
     local gameInterface = player.PlayerGui.Interface.Game
 
+    -- Wait for 3 seconds before making the TeamSelection GUI visible
+    task.wait(3)
+
     teamSelectionGui.Visible = true
 
     while not gameInterface.Visible and isRunning do
@@ -165,6 +168,7 @@ local function teamSelection()
 end
 
 
+
 local player = game.Players.LocalPlayer
 local roundOverStats = player.PlayerGui.Interface.RoundOverStats
 local backBtn = roundOverStats.BackBtn
@@ -172,25 +176,41 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local boundaryFolder = workspace:WaitForChild("Map"):WaitForChild("BallNoCollide"):WaitForChild("Boundaries")
 
 
-local function clickBackButton()
-    while roundOverStats.Visible do
-        -- Check if the BackBtn exists, is visible, and is an ImageButton
-        if backBtn and backBtn.Visible and backBtn:IsA("ImageButton") then
-            -- Get the button's position and size
-            local absPos = backBtn.AbsolutePosition
-            local absSize = backBtn.AbsoluteSize
-            local clickPosition = absPos + (absSize / 2) -- Center of the button
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
-            -- Simulate mouse button down
-            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, true, game, 1)
-            -- Simulate mouse button up
-            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, false, game, 1)
+local function pressEscTwice()
+    -- First press with delay of 0.3 seconds
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Escape, false, game)  -- Key down
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Escape, false, game) -- Key up
+    task.wait(0.3) -- First delay (adjustable)
+
+    -- Second press with delay of 0.7 seconds
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Escape, false, game)  -- Key down
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Escape, false, game) -- Key up
+    task.wait(0.7) -- Second delay (adjustable)
+
+    print("Esc key pressed twice with different delays!")
+end
+
+local escPressed = false -- Flag to track if Esc has been pressed
+
+local function checkRoundOverStats()
+    while true do
+        -- Check if RoundOverStats is visible
+        if roundOverStats.Visible then
+            -- Only press Esc if it hasn't been pressed already
+            if not escPressed then
+                pressEscTwice()  -- Call pressEscTwice only once when the GUI becomes visible
+                escPressed = true  -- Set the flag to prevent multiple presses
+            end
+        else
+            -- Reset the flag when the RoundOverStats GUI is hidden
+            escPressed = false
         end
-
-        -- Optional: Add a short delay between clicks to prevent too fast clicking
-        wait(0.1)  -- Adjust the delay as needed
+        task.wait(0.5)  -- Check every 0.5 seconds
     end
 end
+
 
 -- Toggle for all functionality
 Tab:CreateToggle({
@@ -230,6 +250,9 @@ local function getBall()
     return nil
 end
 
+-- Start checking RoundOverStats visibility in parallel
+task.spawn(checkRoundOverStats)
+
 task.spawn(function()
     while task.wait(0.3) do
         if not isRunning then
@@ -248,7 +271,7 @@ task.spawn(function()
 
             local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
 
-            if distance <= 20 then
+            if distance <= 15 then
                 local targetPart = getRandomTargetPart()
                 if targetPart then
                     -- Adjust character to face the target part
@@ -263,13 +286,9 @@ task.spawn(function()
                 end
             end
         end
-
-        -- Trigger the Back button click if the RoundOverStats screen is visible
-        if roundOverStats.Visible then
-            clickBackButton()
-        end
     end
 end)
+
 
 Tab:CreateSection("Misc")
 
