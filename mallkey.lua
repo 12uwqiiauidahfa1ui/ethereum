@@ -155,7 +155,8 @@ local whitelist = {
     "KEY_boomhkle",
     "KEY_yfyssthkkbomonplvcttsqt",
     "KEY_WDIWAJDWAIDIMSMAIIOOGHKTG",
-    "KEY_WIAJDIGJHEAUJFNAJMXZMFJ"
+    "KEY_WIAJDIGJHEAUJFNAJMXZMFJ",
+    "KEY_ASDJKAWIDAWIDJAWDJAMDSAM"
 }
 
 -- Original verifyKey function with HWID lock integration
