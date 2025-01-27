@@ -273,6 +273,63 @@ end)
 
 Tab:CreateSection("Misc")
 
+-- Variable to control whether Auto Rotate is enabled or not
+local autoRotate = false
+
+-- Create the toggle UI element for Auto Rotate
+Tab:CreateToggle({
+    Name = "Enable Rotate In The Air",
+    Description = "Toggle Rotate",
+    CurrentValue = config.autoRotate,
+    Callback = function(State)
+        autoRotate = State
+        print("Auto Rotate is now " .. (State and "enabled" or "disabled"))
+    end
+})
+
+-- Function to monitor Auto Rotate and apply it to the humanoid
+local function monitorAutoRotate()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+
+    while true do
+        if autoRotate then
+            -- If Auto Rotate is unchecked, wait for 0.2 seconds and re-enable it
+            if not humanoid.AutoRotate then
+                wait(0.2)
+                humanoid.AutoRotate = true
+            end
+        end
+        wait(0.1) -- Optional delay to prevent excessive checking
+    end
+end
+
+-- Function to reapply Auto Rotate when the player respawns
+local function onCharacterAdded(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    if autoRotate then
+        humanoid.AutoRotate = true
+    end
+end
+
+-- Monitor when the player respawns or resets
+game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+-- Ensure the setting is applied immediately for the first spawn
+if game.Players.LocalPlayer.Character then
+    onCharacterAdded(game.Players.LocalPlayer.Character)
+end
+
+-- Start the monitorAutoRotate function when the toggle is enabled
+game:GetService("RunService").Heartbeat:Connect(function()
+    if autoRotate then
+        -- Only run the auto rotate check if the toggle is enabled
+        monitorAutoRotate()
+    end
+end)
+
+
 local Button = Tab:CreateButton({
 	Name = "Break The Match",
 	Description = "Stops the match(must be serving)",
@@ -478,7 +535,7 @@ local Slider = Hitbox:CreateSlider({
             -- Update the size of the part for all axes (X, Y, Z)
             part.Size = Vector3.new(value, value, value)
             print("Spike Part size updated to " .. tostring(part.Size))
-	    config.spikeHitbox = value
+	    config.jumpsetHitbox = value
 	    saveConfig()
         else
             warn("Part not found in Jump Set hitbox!")
