@@ -136,9 +136,6 @@ local function teamSelection()
     local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
     local gameInterface = player.PlayerGui.Interface.Game
 
-    -- Wait for 3 seconds before making the TeamSelection GUI visible
-    task.wait(3)
-
     teamSelectionGui.Visible = true
 
     while not gameInterface.Visible and isRunning do
@@ -168,7 +165,6 @@ local function teamSelection()
 end
 
 
-
 local player = game.Players.LocalPlayer
 local roundOverStats = player.PlayerGui.Interface.RoundOverStats
 local backBtn = roundOverStats.BackBtn
@@ -180,6 +176,8 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local function pressEscTwice()
     -- First press with delay of 0.3 seconds
+    task.wait(23)
+
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Escape, false, game)  -- Key down
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Escape, false, game) -- Key up
     task.wait(0.3) -- First delay (adjustable)
@@ -271,7 +269,7 @@ task.spawn(function()
 
             local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
 
-            if distance <= 20 then
+            if distance <= 15 then
                 local targetPart = getRandomTargetPart()
                 if targetPart then
                     -- Adjust character to face the target part
