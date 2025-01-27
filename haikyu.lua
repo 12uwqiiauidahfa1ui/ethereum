@@ -271,7 +271,7 @@ task.spawn(function()
 
             local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
 
-            if distance <= 15 then
+            if distance <= 20 then
                 local targetPart = getRandomTargetPart()
                 if targetPart then
                     -- Adjust character to face the target part
