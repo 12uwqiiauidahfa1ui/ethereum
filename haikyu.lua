@@ -195,7 +195,7 @@ end
 -- Toggle for all functionality
 Tab:CreateToggle({
     Name = "Auto Farm",
-    Description = "Toggle Auto Farm (Auto Farm sometimes follow the ball and sometimes doesn't)",
+    Description = "Toggle Auto Farm",
     CurrentValue = false,
     Callback = function(Value)
         isRunning = Value
@@ -218,6 +218,18 @@ if not boundaryFolder then
     return
 end
 
+local ballPrefix = "CLIENT_BALL_"
+
+-- Function to find the ball
+local function getBall()
+    for _, object in pairs(workspace:GetChildren()) do
+        if object:IsA("Model") and object.Name:match(ballPrefix) then
+            return object:FindFirstChild("Sphere.001") or object:FindFirstChild("Cube.001")
+        end
+    end
+    return nil
+end
+
 task.spawn(function()
     while task.wait(0.3) do
         if not isRunning then
@@ -228,46 +240,26 @@ task.spawn(function()
         teamSelection()
 
         -- Ball tracking logic
-        local ballPart = nil
-        for _, model in ipairs(workspace:GetChildren()) do
-            if model:IsA("Model") and model.Name:match("^CLIENT_BALL_") then
-                ballPart = model:FindFirstChild("Cube.001") or model:FindFirstChild("Sphere.001")
-                if ballPart then
-                    break
-                end
-            end
-        end
+        local ballPart = getBall()
 
         if ballPart then
-            local isWithinBoundary = false
+            -- Move to the ball
+            humanoid:MoveTo(ballPart.Position)
 
-            -- Check if the ball and player are in the same boundary
-            for _, boundary in ipairs(boundaryFolder:GetChildren()) do
-                if isInsidePart(boundary, ballPart.Position) and isInsidePart(boundary, humanoidRootPart.Position) then
-                    isWithinBoundary = true
-                    break
+            local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
+
+            if distance <= 20 then
+                local targetPart = getRandomTargetPart()
+                if targetPart then
+                    -- Adjust character to face the target part
+                    local lookVector = (targetPart.Position - humanoidRootPart.Position).Unit
+                    humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + lookVector)
                 end
-            end
 
-            if isWithinBoundary then
-                -- Move to the ball
-                humanoid:MoveTo(ballPart.Position)
-
-                local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
-
-                if distance <= 20 then
-                    local targetPart = getRandomTargetPart()
-                    if targetPart then
-                        -- Adjust character to face the target part
-                        local lookVector = (targetPart.Position - humanoidRootPart.Position).Unit
-                        humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + lookVector)
-                    end
-
-                    -- Jump and interact if the ball is above the player
-                    if ballPart.Position.Y > humanoidRootPart.Position.Y + 5 then
-                        pressSpace()
-                        pressClick()
-                    end
+                -- Jump and interact if the ball is above the player
+                if ballPart.Position.Y > humanoidRootPart.Position.Y + 5 then
+                    pressSpace()
+                    pressClick()
                 end
             end
         end
@@ -278,8 +270,6 @@ task.spawn(function()
         end
     end
 end)
-
-
 
 Tab:CreateSection("Misc")
 
