@@ -351,8 +351,8 @@ local Slider = Tab:CreateSlider({
     CurrentValue = config.tiltPower,
     Callback = function(value)
         game.Players.LocalPlayer:SetAttribute("GameTiltPowerMultiplier", value)
-        print("Block Power updated to " .. value)
-        config.blockPower = value
+        print("Tilt Power updated to " .. value)
+        config.tiltPower = value
         saveConfig()    
     end
 })
