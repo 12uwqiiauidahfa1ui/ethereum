@@ -211,6 +211,13 @@ local function isInsidePart(part, position)
         and math.abs(position.Z - center.Z) <= size.Z
 end
 
+local boundaryFolder = workspace:WaitForChild("Map"):WaitForChild("BallNoCollide"):WaitForChild("Boundaries")
+
+if not boundaryFolder then
+    warn("Boundary folder not found! Check the path.")
+    return
+end
+
 task.spawn(function()
     while task.wait(0.3) do
         if not isRunning then
@@ -232,23 +239,35 @@ task.spawn(function()
         end
 
         if ballPart then
-            -- Move to the ball
-            humanoid:MoveTo(ballPart.Position)
+            local isWithinBoundary = false
 
-            local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
-
-            if distance <= 15 then
-                local targetPart = getRandomTargetPart()
-                if targetPart then
-                    -- Adjust character to face the target part
-                    local lookVector = (targetPart.Position - humanoidRootPart.Position).Unit
-                    humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + lookVector)
+            -- Check if the ball and player are in the same boundary
+            for _, boundary in ipairs(boundaryFolder:GetChildren()) do
+                if isInsidePart(boundary, ballPart.Position) and isInsidePart(boundary, humanoidRootPart.Position) then
+                    isWithinBoundary = true
+                    break
                 end
+            end
 
-                -- Jump and interact if the ball is above the player
-                if ballPart.Position.Y > humanoidRootPart.Position.Y + 5 then
-                    pressSpace()
-                    pressClick()
+            if isWithinBoundary then
+                -- Move to the ball
+                humanoid:MoveTo(ballPart.Position)
+
+                local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
+
+                if distance <= 20 then
+                    local targetPart = getRandomTargetPart()
+                    if targetPart then
+                        -- Adjust character to face the target part
+                        local lookVector = (targetPart.Position - humanoidRootPart.Position).Unit
+                        humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + lookVector)
+                    end
+
+                    -- Jump and interact if the ball is above the player
+                    if ballPart.Position.Y > humanoidRootPart.Position.Y + 5 then
+                        pressSpace()
+                        pressClick()
+                    end
                 end
             end
         end
@@ -259,6 +278,7 @@ task.spawn(function()
         end
     end
 end)
+
 
 
 Tab:CreateSection("Misc")
