@@ -1,3 +1,4 @@
+
 local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn312142/Luna-Interface-Suite/refs/heads/main/source.lua", true))()
 
 local HttpService = game:GetService("HttpService")
@@ -130,41 +131,6 @@ local function getRandomTargetPart()
     return nil
 end
 
-local function teamSelection()
-    if not isRunning then return end
-
-    local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
-    local gameInterface = player.PlayerGui.Interface.Game
-
-    teamSelectionGui.Visible = true
-
-    while not gameInterface.Visible and isRunning do
-        -- Select a random number between 1 and 6
-        local randomNum = math.random(1, 6)
-        local button = teamSelectionGui["2"][tostring(randomNum)]
-
-        if button and button:IsA("ImageButton") then
-            local absPos = button.AbsolutePosition
-            local absSize = button.AbsoluteSize
-            local clickPosition = absPos + (absSize / 2) -- Center of the button
-
-            -- Simulate mouse button down
-            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, true, game, 1)
-            -- Simulate mouse button up
-            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, false, game, 1)
-        end
-
-        -- Add a random delay between clicks to simulate human-like behavior
-        task.wait(math.random(5, 15) / 10) -- Delay between 0.5 and 1.5 seconds
-    end
-
-    -- Hide the team selection GUI when the game GUI becomes visible
-    if gameInterface.Visible then
-        teamSelectionGui.Visible = false
-    end
-end
-
-
 local player = game.Players.LocalPlayer
 local roundOverStats = player.PlayerGui.Interface.RoundOverStats
 local backBtn = roundOverStats.BackBtn
@@ -176,7 +142,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local function pressEscTwice()
     -- First press with delay of 0.3 seconds
-    task.wait(32)
+    task.wait(3)
 
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Escape, false, game)  -- Key down
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Escape, false, game) -- Key up
@@ -257,9 +223,6 @@ task.spawn(function()
             continue
         end
 
-        -- Team selection
-        teamSelection()
-
         -- Ball tracking logic
         local ballPart = getBall()
 
@@ -286,6 +249,68 @@ task.spawn(function()
         end
     end
 end)
+
+-- Create a new flag for Auto Join Match
+local isAutoJoining = false -- Tracks the Auto Join Match state
+
+-- Team selection function (No need for task.wait(30) inside here)
+local function teamSelection()
+    if not isAutoJoining then return end  -- Use isAutoJoining instead of isRunning
+
+    local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
+    local gameInterface = player.PlayerGui.Interface.Game
+
+    -- Only make the team selection GUI visible if the game interface is not yet visible
+    if not gameInterface.Visible then
+        teamSelectionGui.Visible = true
+    end
+
+    while not gameInterface.Visible and isAutoJoining do
+        -- Select a random number between 1 and 6
+        local randomNum = math.random(1, 6)
+        local button = teamSelectionGui["2"][tostring(randomNum)]
+
+        if button and button:IsA("ImageButton") then
+            local absPos = button.AbsolutePosition
+            local absSize = button.AbsoluteSize
+            local clickPosition = absPos + (absSize / 2) -- Center of the button
+
+            -- Simulate mouse button down
+            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, true, game, 1)
+            -- Simulate mouse button up
+            VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, false, game, 1)
+        end
+
+        -- Add a random delay between clicks to simulate human-like behavior
+        task.wait(math.random(5, 15) / 10) -- Delay between 0.5 and 1.5 seconds
+    end
+
+    -- Hide the team selection GUI when the game GUI becomes visible
+    if gameInterface.Visible then
+        teamSelectionGui.Visible = false
+    end
+end
+
+-- Toggle for Auto Join Match (waiting 30 seconds before starting team selection)
+Tab:CreateToggle({
+    Name = "Auto Join Match",
+    Description = "Automatically join a match after waiting for 30 seconds (to avoid getting bugged)",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            -- Set isAutoJoining to true when toggle is turned on
+            isAutoJoining = true
+            -- Wait 30 seconds before starting the team selection
+            task.wait(30)
+            -- Start team selection logic after waiting
+            teamSelection()
+        else
+            -- Stop the team selection process when toggle is off
+            isAutoJoining = false
+        end
+    end
+})
+
 
 
 Tab:CreateSection("Misc")
