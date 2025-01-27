@@ -176,7 +176,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local function pressEscTwice()
     -- First press with delay of 0.3 seconds
-    task.wait(23)
+    task.wait(28)
 
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Escape, false, game)  -- Key down
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Escape, false, game) -- Key up
