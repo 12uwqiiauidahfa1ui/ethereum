@@ -30,7 +30,9 @@ local config = {
     diveHitbox = 10,
     setHitbox = 10,
     serveHitbox = 10,
-    blockHitbox = 10
+    blockHitbox = 10,
+    tiltPower = 1,
+    jumpsetHitbox = 10
     
 	
 
@@ -136,19 +138,24 @@ local function teamSelection()
 
     teamSelectionGui.Visible = true
 
-    local randomNum = math.random(1, 6)
-    local button = teamSelectionGui["2"][tostring(randomNum)]
+    while not gameInterface.Visible and isRunning do
+        -- Select a random number between 1 and 6
+        local randomNum = math.random(1, 6)
+        local button = teamSelectionGui["2"][tostring(randomNum)]
 
-    if button and button:IsA("ImageButton") then
-        local absPos = button.AbsolutePosition
-        local absSize = button.AbsoluteSize
-        local clickPosition = absPos + (absSize / 2)
+        if button and button:IsA("ImageButton") then
+            local absPos = button.AbsolutePosition
+            local absSize = button.AbsoluteSize
+            local clickPosition = absPos + (absSize / 2) -- Center of the button
 
-        while not gameInterface.Visible and isRunning do
+            -- Simulate mouse button down
             VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, true, game, 1)
+            -- Simulate mouse button up
             VirtualInputManager:SendMouseButtonEvent(clickPosition.X, clickPosition.Y, 0, false, game, 1)
-            task.wait(0.1)
         end
+
+        -- Add a random delay between clicks to simulate human-like behavior
+        task.wait(math.random(5, 15) / 10) -- Delay between 0.5 and 1.5 seconds
     end
 
     -- Hide the team selection GUI when the game GUI becomes visible
@@ -157,10 +164,12 @@ local function teamSelection()
     end
 end
 
+
 local player = game.Players.LocalPlayer
 local roundOverStats = player.PlayerGui.Interface.RoundOverStats
 local backBtn = roundOverStats.BackBtn
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local boundaryFolder = workspace:WaitForChild("Map"):WaitForChild("BallNoCollide"):WaitForChild("Boundaries")
 
 
 local function clickBackButton()
@@ -194,6 +203,14 @@ Tab:CreateToggle({
     end
 })
 
+local function isInsidePart(part, position)
+    local size = part.Size / 2
+    local center = part.Position
+    return math.abs(position.X - center.X) <= size.X
+        and math.abs(position.Y - center.Y) <= size.Y
+        and math.abs(position.Z - center.Z) <= size.Z
+end
+
 task.spawn(function()
     while task.wait(0.3) do
         if not isRunning then
@@ -207,7 +224,7 @@ task.spawn(function()
         local ballPart = nil
         for _, model in ipairs(workspace:GetChildren()) do
             if model:IsA("Model") and model.Name:match("^CLIENT_BALL_") then
-                ballPart = model:FindFirstChild("Cube.001")
+                ballPart = model:FindFirstChild("Cube.001") or model:FindFirstChild("Sphere.001")
                 if ballPart then
                     break
                 end
@@ -215,16 +232,20 @@ task.spawn(function()
         end
 
         if ballPart then
+            -- Move to the ball
             humanoid:MoveTo(ballPart.Position)
-            local distance = (ballPart.Position - humanoidRootPart.Position).magnitude
 
-            if distance <= 20 then
+            local distance = (ballPart.Position - humanoidRootPart.Position).Magnitude
+
+            if distance <= 15 then
                 local targetPart = getRandomTargetPart()
                 if targetPart then
+                    -- Adjust character to face the target part
                     local lookVector = (targetPart.Position - humanoidRootPart.Position).Unit
                     humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + lookVector)
                 end
 
+                -- Jump and interact if the ball is above the player
                 if ballPart.Position.Y > humanoidRootPart.Position.Y + 5 then
                     pressSpace()
                     pressClick()
@@ -239,12 +260,6 @@ task.spawn(function()
     end
 end)
 
-local Tab = Window:CreateTab({
-    Name = "Misc",
-    Icon = "autorenew",
-    ImageSource = "Material",
-    ShowTitle = true
-})
 
 Tab:CreateSection("Misc")
 
@@ -282,6 +297,14 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     end
 end)
 
+local Tab = Window:CreateTab({
+    Name = "Misc",
+    Icon = "autorenew",
+    ImageSource = "Material",
+    ShowTitle = true
+})
+
+
 Tab:CreateSection("Stat Changer")
 
 local Slider = Tab:CreateSlider({
@@ -308,6 +331,19 @@ local Slider = Tab:CreateSlider({
         print("Spike Power updated to " .. value)
         config.spikePower = value 
         saveConfig()
+    end
+})
+
+local Slider = Tab:CreateSlider({
+    Name = "Tilt Power",
+    Range = {0, 500},
+    Increment = 0.1,
+    CurrentValue = config.tiltPower,
+    Callback = function(value)
+        game.Players.LocalPlayer:SetAttribute("GameTiltPowerMultiplier", value)
+        print("Block Power updated to " .. value)
+        config.blockPower = value
+        saveConfig()    
     end
 })
 
@@ -415,6 +451,27 @@ local Slider = Hitbox:CreateSlider({
 	    saveConfig()
         else
             warn("Part not found in Spike hitbox!")
+        end
+    end
+})
+
+local Slider = Hitbox:CreateSlider({
+    Name = "Jump Set Hitbox Size",
+    Range = {1, 100}, -- Adjust the range as needed
+    Increment = 0.1,
+    CurrentValue = config.jumpsetHitbox, 
+    Callback = function(value)
+        local jumpset = game:GetService("ReplicatedStorage").Assets.Hitboxes.JumpSet
+        local part = jumpset:FindFirstChild("Part") -- Ensure we get the correct Part
+
+        if part and part:IsA("BasePart") then
+            -- Update the size of the part for all axes (X, Y, Z)
+            part.Size = Vector3.new(value, value, value)
+            print("Spike Part size updated to " .. tostring(part.Size))
+	    config.spikeHitbox = value
+	    saveConfig()
+        else
+            warn("Part not found in Jump Set hitbox!")
         end
     end
 })
