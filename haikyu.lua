@@ -323,6 +323,21 @@ Tab:CreateSection("Misc")
 -- Variable to control whether Auto Rotate is enabled or not
 local autoRotate = false
 
+local function autorotateon()
+
+local player = game.Players.LocalPlayer
+local humanoid = player.Character:WaitForChild("Humanoid")
+
+-- Function to check and reset AutoRotate
+game:GetService("RunService").Heartbeat:Connect(function()
+    if humanoid.AutoRotate == false then
+        humanoid.AutoRotate = true
+        print("AutoRotate has been re-enabled.")
+    end
+end)
+end
+
+
 -- Create the toggle UI element for Auto Rotate
 Tab:CreateToggle({
     Name = "Enable Rotate In The Air",
@@ -334,49 +349,9 @@ Tab:CreateToggle({
     end
 })
 
--- Function to monitor Auto Rotate and apply it to the humanoid
-local function monitorAutoRotate()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
-
-    while true do
-        if autoRotate then
-            -- If Auto Rotate is unchecked, wait for 0.2 seconds and re-enable it
-            if not humanoid.AutoRotate then
-                wait(0.2)
-                humanoid.AutoRotate = true
-            end
-        end
-        wait(0.1) -- Optional delay to prevent excessive checking
-    end
+if autoRotate then
+autorotateon()
 end
-
--- Function to reapply Auto Rotate when the player respawns
-local function onCharacterAdded(character)
-    local humanoid = character:WaitForChild("Humanoid")
-    if autoRotate then
-        humanoid.AutoRotate = true
-    end
-end
-
--- Monitor when the player respawns or resets
-game.Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-
--- Ensure the setting is applied immediately for the first spawn
-if game.Players.LocalPlayer.Character then
-    onCharacterAdded(game.Players.LocalPlayer.Character)
-end
-
--- Start the monitorAutoRotate function when the toggle is enabled
-game:GetService("RunService").Heartbeat:Connect(function()
-    if autoRotate then
-        -- Only run the auto rotate check if the toggle is enabled
-        monitorAutoRotate()
-    end
-end)
-
-
 local Button = Tab:CreateButton({
 	Name = "Break The Match",
 	Description = "Stops the match(must be serving)",
