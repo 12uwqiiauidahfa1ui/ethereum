@@ -32,7 +32,8 @@ local config = {
     serveHitbox = 10,
     blockHitbox = 10,
     tiltPower = 1,
-    jumpsetHitbox = 10
+    jumpsetHitbox = 10,
+    autoRotate = false
     
 	
 
@@ -320,38 +321,49 @@ Tab:CreateToggle({
 
 Tab:CreateSection("Misc")
 
--- Variable to control whether Auto Rotate is enabled or not
-local autoRotate = false
+local autoRotateConnection -- Variable to hold the Heartbeat connection
 
 local function autorotateon()
+    local player = game.Players.LocalPlayer
+    local humanoid = player.Character:WaitForChild("Humanoid")
 
-local player = game.Players.LocalPlayer
-local humanoid = player.Character:WaitForChild("Humanoid")
-
--- Function to check and reset AutoRotate
-game:GetService("RunService").Heartbeat:Connect(function()
-    if humanoid.AutoRotate == false then
-        humanoid.AutoRotate = true
-        print("Toggle Rotate has been re-enabled.")
-    end
-end)
+    -- Start monitoring AutoRotate
+    autoRotateConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        if humanoid.AutoRotate == false then
+            humanoid.AutoRotate = true
+            print("AutoRotate has been re-enabled.")
+        end
+    end)
 end
 
+local function autorotateoff()
+    -- Stop monitoring AutoRotate
+    if autoRotateConnection then
+        autoRotateConnection:Disconnect()
+        autoRotateConnection = nil
+        print("AutoRotate monitoring has been disabled.")
+    end
+end
 
--- Create the toggle UI element for Auto Rotate
+-- Toggle for enabling/disabling AutoRotate monitoring
 Tab:CreateToggle({
     Name = "Enable Rotate In The Air",
     Description = "Toggle Rotate In The Air",
     CurrentValue = config.autoRotate,
     Callback = function(State)
-        autoRotate = State
+        config.autoRotate = State
+        saveConfig()
         print("Toggle Rotate is now " .. (State and "enabled" or "disabled"))
+
+        if State then
+            autorotateon() -- Enable monitoring
+        else
+            autorotateoff() -- Disable monitoring
+        end
     end
 })
 
-if autoRotate then
-autorotateon()
-end
+
 
 local Button = Tab:CreateButton({
 	Name = "Break The Match",
