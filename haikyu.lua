@@ -249,10 +249,18 @@ task.spawn(function()
     end
 end)
 
--- Team selection function (No need for task.wait(30) inside here)
-local function teamSelection()
-    if not isRunning then return end
+-- Declare the player
+local player = game.Players.LocalPlayer
+local enablejoin = false
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
+-- Function to handle team selection (called after the reset)
+local function teamSelection()
+    if not enablejoin then return end
+
+    task.wait(10)
+
+    -- Check if Team Selection GUI exists and can be accessed
     local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
     local gameInterface = player.PlayerGui.Interface.Game
 
@@ -261,7 +269,7 @@ local function teamSelection()
         teamSelectionGui.Visible = true
     end
 
-    while not gameInterface.Visible and isRunning do
+    while not gameInterface.Visible and enablejoin do
         -- Select a random number between 1 and 6
         local randomNum = math.random(1, 6)
         local button = teamSelectionGui["2"][tostring(randomNum)]
@@ -287,6 +295,14 @@ local function teamSelection()
     end
 end
 
+-- Listen for the player's character reset and re-trigger the team selection
+player.CharacterAdded:Connect(function(character)
+    -- If the toggle is on, start the team selection after the reset
+    if enablejoin then
+        -- Wait a bit to make sure the character has fully loaded
+        teamSelection()
+    end
+end)
 
 -- Toggle for Auto Join Match (waiting 30 seconds before starting team selection)
 Tab:CreateToggle({
@@ -294,15 +310,13 @@ Tab:CreateToggle({
     Description = "Automatically join a match after waiting for 30 seconds(to avoid getting bugged)",
     CurrentValue = false,
     Callback = function(Value)
-        if Value then
+        enablejoin = Value
+        if enablejoin then
             -- Wait 30 seconds before starting the team selection
-            task.wait(30)
-            -- Start team selection logic after waiting
             teamSelection()
         end
     end
 })
-
 
 Tab:CreateSection("Misc")
 
