@@ -348,7 +348,7 @@ end
 -- Toggle for enabling/disabling AutoRotate monitoring
 Tab:CreateToggle({
     Name = "Enable Rotate In The Air",
-    Description = "Toggle Rotate In The Air",
+    Description = "Toggle Rotate In The Air(Re-Enable This When You Switch Team",
     CurrentValue = config.autoRotate,
     Callback = function(State)
         config.autoRotate = State
