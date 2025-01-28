@@ -1,4 +1,3 @@
-
 local Luna = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn312142/Luna-Interface-Suite/refs/heads/main/source.lua", true))()
 
 local HttpService = game:GetService("HttpService")
@@ -142,7 +141,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local function pressEscTwice()
     -- First press with delay of 0.3 seconds
-    task.wait(3)
+    task.wait(5)
 
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Escape, false, game)  -- Key down
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Escape, false, game) -- Key up
@@ -250,12 +249,9 @@ task.spawn(function()
     end
 end)
 
--- Create a new flag for Auto Join Match
-local isAutoJoining = false -- Tracks the Auto Join Match state
-
 -- Team selection function (No need for task.wait(30) inside here)
 local function teamSelection()
-    if not isAutoJoining then return end  -- Use isAutoJoining instead of isRunning
+    if not isRunning then return end
 
     local teamSelectionGui = player.PlayerGui.Interface.TeamSelection
     local gameInterface = player.PlayerGui.Interface.Game
@@ -265,7 +261,7 @@ local function teamSelection()
         teamSelectionGui.Visible = true
     end
 
-    while not gameInterface.Visible and isAutoJoining do
+    while not gameInterface.Visible and isRunning do
         -- Select a random number between 1 and 6
         local randomNum = math.random(1, 6)
         local button = teamSelectionGui["2"][tostring(randomNum)]
@@ -291,26 +287,21 @@ local function teamSelection()
     end
 end
 
+
 -- Toggle for Auto Join Match (waiting 30 seconds before starting team selection)
 Tab:CreateToggle({
     Name = "Auto Join Match",
-    Description = "Automatically join a match after waiting for 30 seconds (to avoid getting bugged)",
+    Description = "Automatically join a match after waiting for 30 seconds(to avoid getting bugged)",
     CurrentValue = false,
     Callback = function(Value)
         if Value then
-            -- Set isAutoJoining to true when toggle is turned on
-            isAutoJoining = true
             -- Wait 30 seconds before starting the team selection
             task.wait(30)
             -- Start team selection logic after waiting
             teamSelection()
-        else
-            -- Stop the team selection process when toggle is off
-            isAutoJoining = false
         end
     end
 })
-
 
 
 Tab:CreateSection("Misc")
