@@ -332,7 +332,7 @@ local humanoid = player.Character:WaitForChild("Humanoid")
 game:GetService("RunService").Heartbeat:Connect(function()
     if humanoid.AutoRotate == false then
         humanoid.AutoRotate = true
-        print("AutoRotate has been re-enabled.")
+        print("Toggle Rotate has been re-enabled.")
     end
 end)
 end
@@ -341,17 +341,18 @@ end
 -- Create the toggle UI element for Auto Rotate
 Tab:CreateToggle({
     Name = "Enable Rotate In The Air",
-    Description = "Toggle Rotate",
+    Description = "Toggle Rotate In The Air",
     CurrentValue = config.autoRotate,
     Callback = function(State)
         autoRotate = State
-        print("Auto Rotate is now " .. (State and "enabled" or "disabled"))
+        print("Toggle Rotate is now " .. (State and "enabled" or "disabled"))
     end
 })
 
 if autoRotate then
 autorotateon()
 end
+
 local Button = Tab:CreateButton({
 	Name = "Break The Match",
 	Description = "Stops the match(must be serving)",
